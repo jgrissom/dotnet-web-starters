@@ -1,0 +1,16 @@
+@{
+    ViewData["Title"] = "Home";
+    var featured = CryptidData.All.First(c => !c.IsDebunked);
+}
+
+<div class="text-center">
+    <h1 class="display-4">Cryptid Registry</h1>
+    <p>Six creatures. Varying amounts of evidence.</p>
+</div>
+
+<h2 class="h5 mt-4">Featured sighting</h2>
+<div class="row row-cols-1 row-cols-md-3 g-4">
+    <div class="col">
+        <partial name="_CryptidCard" model="featured" />
+    </div>
+</div>

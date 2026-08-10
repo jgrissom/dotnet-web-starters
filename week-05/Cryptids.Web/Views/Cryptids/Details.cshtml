@@ -1,0 +1,16 @@
+@model Cryptid
+
+<h1>@Model.Name</h1>
+<p class="lead">@Model.Region · first sighted @Model.FirstSighting</p>
+<p>@Model.Sightings reports on file.</p>
+
+@if (Model.IsDebunked)
+{
+    <p><span class="badge bg-danger">💀 Debunked</span></p>
+}
+else
+{
+    <p><span class="badge bg-success">👀 Unconfirmed</span></p>
+}
+
+<a href="/Cryptids">← Back to the registry</a>

@@ -1,0 +1,18 @@
+@model List<Cryptid>
+@{
+    ViewData["Title"] = "Field Reports";
+}
+
+<h1>Cryptid Registry 👻</h1>
+<p class="text-muted">@Model.Count creatures on file.</p>
+
+<a asp-action="Create" class="btn btn-primary mb-4">＋ File a report</a>
+
+<div class="row row-cols-1 row-cols-md-3 g-4">
+    @foreach (var cryptid in Model)
+    {
+        <div class="col">
+            <partial name="_CryptidCard" model="cryptid" />
+        </div>
+    }
+</div>

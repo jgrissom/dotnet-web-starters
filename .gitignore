@@ -1,0 +1,8 @@
+# Build output. Nothing here should ever be committed — and note that
+# .gitignore does not untrack what is already tracked, so if any does
+# sneak in, it needs `git rm -r --cached <path>` as well.
+bin/
+obj/
+*.user
+.vs/
+.DS_Store

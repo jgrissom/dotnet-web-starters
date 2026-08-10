@@ -1,0 +1,20 @@
+@model Cryptid
+
+<div class="card cryptid-card h-100">
+    <div class="card-body">
+        <h5 class="card-title">@Model.Name</h5>
+        <h6 class="card-subtitle mb-2 text-muted">@Model.Region</h6>
+        <p class="card-text">First sighted @Model.FirstSighting · @Model.Sightings reports</p>
+        @if (Model.IsDebunked)
+        {
+            <span class="badge bg-danger">💀 Debunked</span>
+        }
+        else
+        {
+            <span class="badge bg-success">👀 Unconfirmed</span>
+        }
+    </div>
+    <div class="card-footer">
+        <a href="/Cryptids/Details/@Model.Id">Details</a>
+    </div>
+</div>

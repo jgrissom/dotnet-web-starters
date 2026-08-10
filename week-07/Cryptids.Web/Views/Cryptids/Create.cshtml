@@ -1,0 +1,47 @@
+@model Cryptid
+@{
+    ViewData["Title"] = "File a report";
+}
+
+<h1>File a field report 👣</h1>
+<p class="text-muted">Six creatures on file. Make it seven.</p>
+
+<form asp-action="Create" method="post" class="col-md-6">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <div class="mb-3">
+        <label asp-for="Name" class="form-label"></label>
+        <input asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Region" class="form-label"></label>
+        <input asp-for="Region" class="form-control" />
+        <span asp-validation-for="Region" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="FirstSighting" class="form-label"></label>
+        <input asp-for="FirstSighting" class="form-control" />
+        <span asp-validation-for="FirstSighting" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Sightings" class="form-label"></label>
+        <input asp-for="Sightings" class="form-control" />
+        <span asp-validation-for="Sightings" class="text-danger"></span>
+    </div>
+
+    <div class="form-check mb-3">
+        <input asp-for="IsDebunked" class="form-check-input" />
+        <label asp-for="IsDebunked" class="form-check-label"></label>
+    </div>
+
+    <button type="submit" class="btn btn-primary">File it</button>
+    <a asp-action="Index" class="btn btn-link">Cancel</a>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
