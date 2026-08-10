@@ -22,7 +22,14 @@
     req("current page marked .active in nav", $("a.nav-link.active"));
     req("Bootstrap Icons stylesheet linked", $('link[href*="bootstrap-icons"]'));
     req("at least one icon used (bi-*)", $('[class*="bi-"]'));
-    req("footer: centered, muted, padded", $("footer.text-center") && $("footer .mb-0, footer p") && /text-muted/.test($("footer")?.className + " " + ($("footer p")?.className || "")));
+    // "padded" is part of the label, so it has to be part of the check — any real
+    // vertical padding utility on the footer or something inside it (py-4, p-3, pt-5…).
+    const footerClasses = [$("footer"), ...$$("footer [class]")]
+      .map(e => (e && e.className) || "").join(" ");
+    req("footer: centered, muted, padded",
+      $("footer.text-center") && $("footer .mb-0, footer p") &&
+      /text-muted/.test($("footer")?.className + " " + ($("footer p")?.className || "")) &&
+      /(^|\s)(p|py|pt|pb)-[1-9]/.test(footerClasses));
 
     // ── per page ──
     if (page === "index") {
