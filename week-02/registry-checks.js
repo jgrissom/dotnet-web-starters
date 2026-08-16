@@ -17,9 +17,23 @@
     req("Bootstrap CSS linked", $('link[href*="bootstrap"][rel="stylesheet"]'));
     req("Bootstrap JS bundle at end of body", $('script[src*="bootstrap.bundle"]'));
     req("navbar with brand", $("nav.navbar") && $(".navbar-brand"));
-    req("navbar toggler + collapse (hamburger works)", $(".navbar-toggler") && $(".navbar-collapse"));
+    // "hamburger works" is part of the label, so the toggler has to actually point
+    // at the collapse. A data-bs-target naming an id that doesn't exist renders a
+    // button that does nothing, and the old check passed it.
+    const toggler = $(".navbar-toggler");
+    const togTarget = (toggler && (toggler.getAttribute("data-bs-target") || toggler.getAttribute("href")) || "").trim();
+    let togHit = null;
+    if (togTarget) { try { togHit = $(togTarget); } catch (e) { togHit = null; } }
+    req("navbar toggler + collapse (hamburger works)",
+      toggler && $(".navbar-collapse") && togHit && togHit.classList.contains("collapse"));
     req("nav links to all 3 pages", $$("a.nav-link").length >= 3);
-    req("current page marked .active in nav", $("a.nav-link.active"));
+    // ...on THIS page's link. Pasting one navbar onto all three pages leaves every
+    // page highlighting Home, and "is something active?" called that correct.
+    const activeHref = ($("a.nav-link.active")?.getAttribute("href") || "").toLowerCase();
+    const activeFile = activeHref.split(/[?#]/)[0].split("/").pop();
+    req("current page marked .active in nav", $("a.nav-link.active") && (page === "index"
+      ? ["", ".", "index.html"].includes(activeFile)   // "/", "./" and "" all mean home
+      : activeFile === page + ".html"));
     req("Bootstrap Icons stylesheet linked", $('link[href*="bootstrap-icons"]'));
     req("at least one icon used (bi-*)", $('[class*="bi-"]'));
     // "padded" is part of the label, so it has to be part of the check — any real
