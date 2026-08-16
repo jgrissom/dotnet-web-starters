@@ -21,9 +21,12 @@
     // sideways on a phone while every other check stays green. Deliberately asks
     // for a container ANCESTOR, not a container on <main>: wrapping <main> in one
     // is just as correct, and a stricter test failed that page.
+    // Two halves: a container has to exist, and any rows have to be inside one.
+    // Requiring rows to EXIST made this unpassable until the feature row was
+    // built — task 1 stayed red until task 5, on a page that was already right.
     const rows = [...$$(".row")];
-    req("rows sit inside a container",
-      rows.length > 0 && rows.every(r => r.closest(".container, .container-fluid")));
+    req("page content sits in a container",
+      $(".container, .container-fluid") && rows.every(r => r.closest(".container, .container-fluid")));
     req("navbar with brand", $("nav.navbar") && $(".navbar-brand"));
     // "hamburger works" is part of the label, so the toggler has to actually point
     // at the collapse. A data-bs-target naming an id that doesn't exist renders a
