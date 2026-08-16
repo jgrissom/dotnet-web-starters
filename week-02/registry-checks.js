@@ -4,8 +4,6 @@
 // (Leave this file in when you deploy — it doesn't affect grading.)
 
 (function (root) {
-  const LAB_COMPONENTS = "navbar|card|badge|alert|btn|form-control|form-select|form-label";
-
   function runChecks(doc, page) {
     const $ = (sel) => doc.querySelector(sel);
     const $$ = (sel) => doc.querySelectorAll(sel);
@@ -70,7 +68,10 @@
       /--bs-body-font-family/.test(styleText) && /h1[^{]*\{[^}]*font-family/.test(styleText));
 
     if (page === "registry") {
-      hw("a seventh cryptid of your own, with a badge", $$(".card").length >= 7 && $$(".card .badge").length >= 7);
+      // The homework says to reuse the "artist unknown" plate rather than draw
+      // one, so the card has to carry an image like the other six do.
+      hw("a seventh cryptid of your own — badge and plate",
+        $$(".card").length >= 7 && $$(".card .badge").length >= 7 && $$(".card img").length >= 7);
     }
     hw("a docs component we didn't cover (this page)",
       $('.accordion, .carousel, .modal, .list-group, .offcanvas, [data-bs-toggle="tooltip"], [data-bs-toggle="popover"], [data-bs-theme-toggle], #themeToggle'));
