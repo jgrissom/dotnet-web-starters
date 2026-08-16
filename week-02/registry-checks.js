@@ -26,7 +26,11 @@
     if (togTarget) { try { togHit = $(togTarget); } catch (e) { togHit = null; } }
     req("navbar toggler + collapse (hamburger works)",
       toggler && $(".navbar-collapse") && togHit && togHit.classList.contains("collapse"));
-    req("nav links to all 3 pages", $$("a.nav-link").length >= 3);
+    // three links all pointing at the same page is not "links to all 3 pages"
+    const navFiles = new Set([...$$("a.nav-link")]
+      .map(a => (a.getAttribute("href") || "").toLowerCase().split(/[?#]/)[0].split("/").pop())
+      .map(f => (f === "" || f === ".") ? "index.html" : f));
+    req("nav links to all 3 pages", navFiles.size >= 3);
     // ...on THIS page's link. Pasting one navbar onto all three pages leaves every
     // page highlighting Home, and "is something active?" called that correct.
     const activeHref = ($("a.nav-link.active")?.getAttribute("href") || "").toLowerCase();
@@ -50,7 +54,10 @@
       req("hero: display-* heading", $('[class*="display-"]'));
       req("hero: lead paragraph", $(".lead"));
       req("hero: button to the registry page", [...$$('a[href*="registry"]')].some(a => /btn/.test(a.className)));
-      req("feature row: 3+ columns in a row", $(".row") && $$('.row [class*="col"]').length >= 3);
+      // "full width on phones, thirds on md and up" needs a breakpoint in the class.
+      // Three plain `col` sit side by side at every width, phone included.
+      req("feature row: 3+ responsive columns in a row", $(".row") &&
+        [...$$('.row [class*="col-"]')].filter(c => /(^|\s)col-(sm|md|lg|xl|xxl)-\d/.test(c.className)).length >= 3);
     }
     if (page === "registry") {
       req("6+ cards", $$(".card").length >= 6);
@@ -65,7 +72,10 @@
       req("labels use form-label", $$(".form-label").length >= 3);
       req("a form-select dropdown", $(".form-select"));
       req("submit button", $('button[type="submit"], form button'));
-      req("info alert above the form", $(".alert"));
+      // Was labelled "info alert above the form" while accepting any .alert
+      // anywhere. Position is not worth DOM logic; the variant is, and the lab
+      // asks for alert-info by name.
+      req("an alert-info on the page", $(".alert-info"));
       req("form constrained with the grid (col-*)", [...$$('[class*="col-"]')].some(c => c.querySelector("form")));
     }
 
