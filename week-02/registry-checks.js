@@ -16,6 +16,14 @@
     req("viewport meta present", $('meta[name="viewport"]'));
     req("Bootstrap CSS linked", $('link[href*="bootstrap"][rel="stylesheet"]'));
     req("Bootstrap JS bundle at end of body", $('script[src*="bootstrap.bundle"]'));
+    // Rows live inside containers. Without one, .row's negative gutters bleed past
+    // the viewport — measured at 402px in a 390px screen — so the page scrolls
+    // sideways on a phone while every other check stays green. Deliberately asks
+    // for a container ANCESTOR, not a container on <main>: wrapping <main> in one
+    // is just as correct, and a stricter test failed that page.
+    const rows = [...$$(".row")];
+    req("rows sit inside a container",
+      rows.length > 0 && rows.every(r => r.closest(".container, .container-fluid")));
     req("navbar with brand", $("nav.navbar") && $(".navbar-brand"));
     // "hamburger works" is part of the label, so the toggler has to actually point
     // at the collapse. A data-bs-target naming an id that doesn't exist renders a
