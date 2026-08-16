@@ -1,16 +1,18 @@
-// Week 2 Portfolio Self-Check
-// Already wired into each starter page. Open the console (F12) on any page —
-// it grades THAT page's checklist. Refresh after each change; work one ❌ at a time.
+// Week 2 Cryptid Registry Self-Check
+// Already wired into each page. Open the console (F12) on any page — it grades
+// THAT page. Refresh after each change; work one ❌ at a time.
 // (Leave this file in when you deploy — it doesn't affect grading.)
 
 (function (root) {
+  const LAB_COMPONENTS = "navbar|card|badge|alert|btn|form-control|form-select|form-label";
+
   function runChecks(doc, page) {
     const $ = (sel) => doc.querySelector(sel);
     const $$ = (sel) => doc.querySelectorAll(sel);
     const styleText = [...$$("style")].map(s => s.textContent).join("\n");
-    const results = { page, required: [], yours: [], warnings: [] };
+    const results = { page, required: [], homework: [], warnings: [] };
     const req = (label, pass) => results.required.push({ label, pass: !!pass });
-    const yours = (label, pass) => results.yours.push({ label, pass: !!pass });
+    const hw = (label, pass) => results.homework.push({ label, pass: !!pass });
 
     // ── every page ──
     req("viewport meta present", $('meta[name="viewport"]'));
@@ -35,17 +37,17 @@
     if (page === "index") {
       req("hero: display-* heading", $('[class*="display-"]'));
       req("hero: lead paragraph", $(".lead"));
-      req("hero: button to projects page", [...$$('a[href*="projects"]')].some(a => /btn/.test(a.className)));
+      req("hero: button to the registry page", [...$$('a[href*="registry"]')].some(a => /btn/.test(a.className)));
       req("feature row: 3+ columns in a row", $(".row") && $$('.row [class*="col"]').length >= 3);
     }
-    if (page === "projects") {
+    if (page === "registry") {
       req("6+ cards", $$(".card").length >= 6);
       req("cards live in responsive columns", $$('[class*="col-"] .card').length >= 6);
       req("cards use h-100 (equal heights)", $$(".card.h-100").length >= 6);
       req("row has gutters (g-*)", [...$$(".row")].some(r => /(^|\s)g[xy]?-\d/.test(r.className)));
       req("badges on cards", $$(".card .badge").length >= 3);
     }
-    if (page === "contact") {
+    if (page === "report") {
       req("form present", $("form"));
       req("3+ form-control inputs", $$(".form-control").length >= 3);
       req("labels use form-label", $$(".form-label").length >= 3);
@@ -55,10 +57,23 @@
       req("form constrained with the grid (col-*)", [...$$('[class*="col-"]')].some(c => c.querySelector("form")));
     }
 
-    // ── make it yours ──
-    yours("Bootswatch theme (not stock Bootstrap)", $('link[href*="bootswatch"]'));
-    yours("Google Fonts linked", $('link[href*="fonts.googleapis.com"]'));
-    yours("--bs-body-font-family override", /--bs-body-font-family/.test(styleText));
+    // ── homework (Part 2 — not needed during the lab) ──
+    const themeLink = [...$$('link[rel="stylesheet"]')].find(l => /bootswatch/.test(l.getAttribute("href") || ""));
+    hw("Bootswatch theme, and not Flatly",
+      themeLink && !/\/flatly\//i.test(themeLink.getAttribute("href") || ""));
+
+    // "one heading font, one body font" — both names have to be in the Google URL(s)
+    const families = [...$$('link[href*="fonts.googleapis.com"]')]
+      .flatMap(l => [...(l.getAttribute("href") || "").matchAll(/family=([^&:]+)/g)].map(m => m[1]));
+    hw("two Google Font families linked (heading + body)", new Set(families).size >= 2);
+    hw("font override: --bs-body-font-family and a heading rule",
+      /--bs-body-font-family/.test(styleText) && /h1[^{]*\{[^}]*font-family/.test(styleText));
+
+    if (page === "registry") {
+      hw("a seventh cryptid of your own, with a badge", $$(".card").length >= 7 && $$(".card .badge").length >= 7);
+    }
+    hw("a docs component we didn't cover (this page)",
+      $('.accordion, .carousel, .modal, .list-group, .offcanvas, [data-bs-toggle="tooltip"], [data-bs-toggle="popover"], [data-bs-theme-toggle], #themeToggle'));
 
     // ── warnings (deduction risks) ──
     const allowed = styleText.replace(/[^{}]*\{[^}]*font-family[^}]*\}/g, "").replace(/:root\s*\{\s*\}/g, "").trim();
@@ -71,8 +86,11 @@
 
   // Browser runner
   if (typeof window !== "undefined" && typeof document !== "undefined") {
-    const path = location.pathname.toLowerCase();
-    const page = path.includes("projects") ? "projects" : path.includes("contact") ? "contact" : "index";
+    // Match on the FILE name, not the whole path — the folder is called
+    // cryptid-registry, so path.includes("registry") would call every page the
+    // registry page, including the home page.
+    const file = (location.pathname.toLowerCase().split("/").pop() || "");
+    const page = file.startsWith("registry") ? "registry" : file.startsWith("report") ? "report" : "index";
     const r = runChecks(document, page);
     const show = (title, list) => {
       console.log(`%c── ${title} ──`, "font-weight: bold");
@@ -80,11 +98,23 @@
     };
     console.log(`%c── Week 2 Self-Check: ${page}.html ──`, "font-weight: bold; font-size: 1.1em");
     show("Required", r.required);
-    show("Make it yours", r.yours);
-    const pr = r.required.filter(c => c.pass).length, py = r.yours.filter(c => c.pass).length;
-    console.log(`%c${pr}/${r.required.length} required · ${py}/${r.yours.length} make-it-yours — check all 3 pages!`,
-      pr === r.required.length ? "color: green; font-weight: bold" : "color: orange; font-weight: bold");
+    const pr = r.required.filter(c => c.pass).length;
+    const allGreen = pr === r.required.length;
+    console.log(`%c${pr}/${r.required.length} required — check all 3 pages!`,
+      allGreen ? "color: green; font-weight: bold" : "color: orange; font-weight: bold");
     r.warnings.forEach(w => console.log(`%c⚠️ ${w}`, "color: orange"));
+
+    // Homework stays out of the way until the lab checklist on this page is done.
+    const ph = r.homework.filter(c => c.pass).length;
+    if (!allGreen) {
+      console.log(`%c── Homework (Part 2) ── ${ph}/${r.homework.length} — finish the checklist above first`,
+        "color: gray");
+    } else {
+      show("Homework (Part 2)", r.homework);
+      console.log("%cThe extra component only has to appear on ONE page — a ❌ here is fine if another page has it.", "color: gray");
+      console.log(`%c${ph}/${r.homework.length} homework`,
+        ph === r.homework.length ? "color: green; font-weight: bold" : "color: orange; font-weight: bold");
+    }
   }
 
   if (typeof module !== "undefined") module.exports = { runChecks };

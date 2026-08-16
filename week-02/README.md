@@ -1,4 +1,4 @@
-# Week 2 lab starter — Bootstrap Portfolio
+# Week 2 lab starter — The Cryptid Registry 👻
 
 **Copy this folder out** to wherever you keep your projects, then work on the copy.
 Never work inside the clone: the next `git pull` will fight you.
