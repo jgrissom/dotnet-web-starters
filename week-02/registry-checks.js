@@ -83,7 +83,7 @@
       req("labels use form-label", $$(".form-label").length >= 3);
       req("a form-select dropdown", $(".form-select"));
       req("submit button", $('button[type="submit"], form button'));
-      // Was labelled "info alert above the form" while accepting any .alert
+      // Was labeled "info alert above the form" while accepting any .alert
       // anywhere. Position is not worth DOM logic; the variant is, and the lab
       // asks for alert-info by name.
       req("an alert-info on the page", $(".alert-info"));
