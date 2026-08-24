@@ -315,9 +315,14 @@ public class FormChecks : IClassFixture<WebApplicationFactory<Program>>
             + "than inside a @section Scripts block — and loaded there it runs before jQuery "
             + "exists. Wrap it in the section.");
 
-        Assert.True(Regex.IsMatch(html, @"data-val-required", RegexOptions.IgnoreCase),
-            "your inputs have no data-val-required attributes, which is what the browser-side "
-            + "validator reads. They appear automatically when asp-for renders a property that "
-            + "has a [Required] attribute — so this usually means task 2 or task 3 isn't done.");
+        // NOT data-val-required: ASP.NET marks every non-nullable property required whether
+        // the student typed [Required] or not, so that attribute is on the page even with no
+        // annotations at all. Match a rule that can only have come from one they wrote.
+        Assert.True(Regex.IsMatch(html, @"data-val-(length|range)", RegexOptions.IgnoreCase),
+            "your inputs carry no data-val-length or data-val-range attributes. Those are what "
+            + "the browser-side validator reads, and they're the only ones that prove you wrote "
+            + "a rule — data-val-required doesn't count, because ASP.NET marks every non-nullable "
+            + "property required whether you ask it to or not. Add the [StringLength] and [Range] "
+            + "attributes from task 2 to Models/Cryptid.cs.");
     }
 }
