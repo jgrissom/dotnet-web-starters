@@ -5,8 +5,8 @@
 //  Your job is turning ❌ into ✅ by editing Cryptids.Web — never this file.
 //
 //  This week the app already works. Every check below is about the SHELL —
-//  the layout, the partial, the section and the theme. Almost all of your
-//  edits happen in Views/Shared/_Layout.cshtml.
+//  the layout, the partial, the section and the theme. Almost every edit
+//  happens in Views/ — you will not open a controller.
 // ═══════════════════════════════════════════════════════════════════
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
