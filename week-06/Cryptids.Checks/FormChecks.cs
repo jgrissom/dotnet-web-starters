@@ -270,11 +270,10 @@ public class FormChecks : IClassFixture<WebApplicationFactory<Program>>
         // Ask this one FIRST: a blank form means nothing bound the post at all, which
         // would otherwise look identical to "you forgot the error messages."
         Assert.True(html.Contains("Loch Ness, Scotland"),
-            "the form came back empty — the region I typed wasn't in it. Either nothing received "
-            + "the post (an action with no verb attribute answers every verb, so a lone GET "
-            + "Create() serves the blank form straight back — add the [HttpPost] overload), or "
-            + "you're returning View() with no argument. One bad field shouldn't cost them "
-            + "everything they typed: return View(cryptid).");
+            "the form came back empty — the region I typed wasn't in it, so nothing received the "
+            + "post. An action with no verb attribute answers every verb, so your lone GET Create() "
+            + "served the blank form straight back. Add the [HttpPost] Create(Cryptid cryptid) "
+            + "overload.");
 
         Assert.True(html.Contains("field-validation-error") || html.Contains("validation-summary-errors"),
             "the form came back with their input intact, but no error messages on it — so the "
