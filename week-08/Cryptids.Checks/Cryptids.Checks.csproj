@@ -5,6 +5,8 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <IsPackable>false</IsPackable>
+    <!-- List every check, passed and failed, not just the failures. -->
+    <VSTestLogger>console%3Bverbosity=normal</VSTestLogger>
   </PropertyGroup>
 
   <ItemGroup>
