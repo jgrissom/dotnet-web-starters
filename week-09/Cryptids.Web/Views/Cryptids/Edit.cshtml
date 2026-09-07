@@ -1,0 +1,63 @@
+@model Cryptid
+@{
+    ViewData["Title"] = $"Correct: {Model.Name}";
+}
+
+<h1>Correct the record ✏️</h1>
+<p class="text-muted">Field reports get facts wrong. Fix them here.</p>
+
+<form asp-action="Edit" method="post" class="col-md-6">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    @* The answer to last week's reading question: this is where the Id
+       travels. Without it, the POST doesn't know which record it's editing. *@
+    <input type="hidden" asp-for="Id" />
+
+    <div class="mb-3">
+        <label asp-for="Name" class="form-label"></label>
+        <input asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="LatinName" class="form-label"></label>
+        <input asp-for="LatinName" class="form-control" />
+        <span asp-validation-for="LatinName" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Region" class="form-label"></label>
+        <input asp-for="Region" class="form-control" />
+        <span asp-validation-for="Region" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="FirstSighting" class="form-label"></label>
+        <input asp-for="FirstSighting" class="form-control" />
+        <span asp-validation-for="FirstSighting" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Sightings" class="form-label"></label>
+        <input asp-for="Sightings" class="form-control" />
+        <span asp-validation-for="Sightings" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="ImageUrl" class="form-label"></label>
+        <input asp-for="ImageUrl" class="form-control" />
+        <span asp-validation-for="ImageUrl" class="text-danger"></span>
+    </div>
+
+    <div class="form-check mb-3">
+        <input asp-for="IsDebunked" class="form-check-input" />
+        <label asp-for="IsDebunked" class="form-check-label"></label>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Save the correction</button>
+    <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-link">Cancel</a>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

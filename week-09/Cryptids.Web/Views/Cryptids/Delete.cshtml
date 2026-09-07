@@ -1,0 +1,19 @@
+@model Cryptid
+@{
+    ViewData["Title"] = $"Close the file: {Model.Name}";
+}
+
+<h1>Close the file 🗑️</h1>
+<p class="text-muted">This removes the record from the registry for good. There is no undo.</p>
+
+<div class="col-md-4 mb-4">
+    <partial name="_CryptidCard" model="Model" />
+</div>
+
+@* The page you're on is a GET, and it deleted nothing. Only this form's
+   POST does — a link must never change data. *@
+<form asp-action="Delete" method="post">
+    <input type="hidden" asp-for="Id" />
+    <button type="submit" class="btn btn-danger">Close the file</button>
+    <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-link">Keep it</a>
+</form>

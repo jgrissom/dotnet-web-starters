@@ -1,0 +1,26 @@
+@model Cryptid
+
+<div class="card cryptid-card h-100">
+    @* Null-safe on purpose: records filed through the form have no plate yet. *@
+    <img src="@(Model.ImageUrl ?? "/img/cryptids/unillustrated.webp")" class="card-img-top" alt="Field-guide plate: @Model.Name" />
+    <div class="card-body">
+        <h5 class="card-title">@Model.Name</h5>
+        @if (Model.LatinName != null)
+        {
+            <h6 class="card-subtitle mb-1 fst-italic text-muted">@Model.LatinName</h6>
+        }
+        <h6 class="card-subtitle mb-2 text-muted">@Model.Region</h6>
+        <p class="card-text">First sighted @Model.FirstSighting · @Model.Sightings reports</p>
+        @if (Model.IsDebunked)
+        {
+            <span class="badge bg-danger">💀 Debunked</span>
+        }
+        else
+        {
+            <span class="badge bg-success">👀 Unconfirmed</span>
+        }
+    </div>
+    <div class="card-footer">
+        <a href="/Cryptids/Details/@Model.Id">Details</a>
+    </div>
+</div>

@@ -1,0 +1,19 @@
+@model Cryptid?
+@{
+    ViewData["Title"] = "Home";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Cryptid Registry</h1>
+    <p class="lead">Creatures of uncertain existence, cataloged with unwarranted confidence.</p>
+
+    @if (Model != null)
+    {
+        <div class="col-md-4 mx-auto my-4 text-start">
+            <partial name="_CryptidCard" model="Model" />
+        </div>
+        <p class="text-muted">Pulled from the files at random — refresh for another.</p>
+    }
+
+    <a asp-controller="Cryptids" asp-action="Index" class="btn btn-primary btn-lg mt-3">Open the registry 👻</a>
+</div>
