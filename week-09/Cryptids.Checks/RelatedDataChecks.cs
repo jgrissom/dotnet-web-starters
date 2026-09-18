@@ -71,7 +71,7 @@ public class RelatedDataChecks : IClassFixture<RegistryApp>
     private (IServiceScope scope, DbContext context) Db() => _app.NewContext();
 
     private const string MakeTheModel =
-        "Task 1 creates it: a Sighting class in Models/, with an int CryptidId foreign key and a "
+        "Task 2 creates it: a Sighting class in Models/, with an int CryptidId foreign key and a "
         + "Cryptid? navigation property — and, on Cryptid, "
         + "public ICollection<Sighting> Sightings { get; set; } = new List<Sighting>();";
 
@@ -146,7 +146,7 @@ public class RelatedDataChecks : IClassFixture<RegistryApp>
 
             var all = rows.Cast<object>().ToList();
             Assert.True(all.Count > 0,
-                "the Sightings table is empty. Task 2 seeds it in OnModelCreating with "
+                "the Sightings table is empty. Task 3 seeds it in OnModelCreating with "
                 + "modelBuilder.Entity<Sighting>().HasData(...), the same way the creatures "
                 + "themselves are seeded — then a migration carries the rows into the database.");
 
@@ -366,7 +366,7 @@ public class RelatedDataChecks : IClassFixture<RegistryApp>
         }
 
         Assert.Fail(
-            "I couldn't find a form for filing a report. Task 4 builds one: a SightingsController "
+            "I couldn't find a form for filing a report. Task 5 builds one: a SightingsController "
             + "with a Create pair, a Views/Sightings/Create.cshtml carrying the creature dropdown, "
             + "and a link to it from a creature's details page. I looked at /Sightings/Create and "
             + "at every Create link on /Cryptids/Details/1.");
