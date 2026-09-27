@@ -220,7 +220,7 @@ public class DatabaseChecks : IClassFixture<RegistryApp>
             + "    dotnet user-secrets set \"ConnectionStrings:DefaultConnection\" \"...\"");
     }
 
-    [Fact] // Task 4: a migration exists, and it builds the table
+    [Fact] // Task 4: the migrations build the table and carry the seed rows
     public async Task Check4_AMigrationDescribesTheTable()
     {
         await Task.CompletedTask;
@@ -231,6 +231,8 @@ public class DatabaseChecks : IClassFixture<RegistryApp>
             .Where(t => typeof(Migration).IsAssignableFrom(t)
                      && !t.IsAbstract
                      && t.GetCustomAttribute<MigrationAttribute>() != null)
+            // The id starts with the timestamp, so this is the order they were generated in.
+            .OrderBy(t => t.GetCustomAttribute<MigrationAttribute>()!.Id, StringComparer.Ordinal)
             .ToList();
 
         Assert.True(migrations.Count > 0,
@@ -247,23 +249,30 @@ public class DatabaseChecks : IClassFixture<RegistryApp>
             + "is only half there. Delete the Migrations folder and run dotnet ef migrations add "
             + "InitialCreate again.");
 
-        // Read the operations the migration would run. This needs no database.
-        var migration = (Migration)Activator.CreateInstance(migrations[0])!;
-        var operations = migration.UpOperations;
+        // Read the operations the migrations would run. This needs no database.
+        var operations = migrations
+            .Select(t => ((Migration)Activator.CreateInstance(t)!).UpOperations)
+            .ToList();
 
-        var createdTables = operations.OfType<CreateTableOperation>().Select(o => o.Name).ToList();
+        var createdTables = operations[0].OfType<CreateTableOperation>().Select(o => o.Name).ToList();
         Assert.True(createdTables.Any(t => t.Equals("Cryptids", StringComparison.OrdinalIgnoreCase)),
             "your first migration doesn't create a Cryptids table. It should have been generated "
             + $"from your DbSet<Cryptid>. (It creates: {(createdTables.Count == 0 ? "nothing" : string.Join(", ", createdTables))}) "
             + "If you added the migration before writing the DbSet, delete the Migrations folder "
             + "and add it again.");
 
-        var seededRows = operations.OfType<InsertDataOperation>().Sum(o => o.Values.GetLength(0));
+        // The seed rows may be in the first migration or in a later one. The lab adds them
+        // in a second migration, the way the demo does; one migration doing both is fine too.
+        var seededRows = operations
+            .SelectMany(ops => ops.OfType<InsertDataOperation>())
+            .Sum(o => o.Values.GetLength(0));
         Assert.True(seededRows >= 6,
-            $"your migration inserts {seededRows} row(s) of seed data, and the registry has 6 "
-            + "creatures. The HasData from task 2 has to be in place BEFORE you add the migration — "
-            + "a migration is a snapshot of the model at the moment you generated it. Delete the "
-            + "Migrations folder and run dotnet ef migrations add InitialCreate again.");
+            $"your migrations insert {seededRows} row(s) of seed data, and the registry has 6 "
+            + "creatures. A migration is a snapshot of the model at the moment you generated it, so "
+            + "HasData written after InitialCreate isn't in it. Add a migration that carries it, "
+            + "from inside the Cryptids.Web folder:\n"
+            + "    dotnet ef migrations add SeedCryptids\n"
+            + "    dotnet ef database update");
     }
 
     [Fact] // Task 5: the read pages come from the database
