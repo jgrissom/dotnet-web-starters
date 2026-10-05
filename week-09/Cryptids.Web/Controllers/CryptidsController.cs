@@ -80,7 +80,7 @@ public class CryptidsController : Controller
     }
 
     // POST /Cryptids/Edit/3 — the corrected record comes back.
-    // The [Bind] list is a guest list: only these properties are read out of
+    // The [Bind] list: only these properties are read out of
     // the form. Add a property to the model and its name goes here too, or
     // the new field is dropped silently.
     [HttpPost]

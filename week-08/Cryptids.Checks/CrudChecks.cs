@@ -412,7 +412,7 @@ public class CrudChecks : IClassFixture<RegistryApp>
             + "    var featured = await _context.Cryptids.OrderBy(c => Guid.NewGuid()).FirstOrDefaultAsync();\n"
             + "    return View(featured);");
 
-        // The new columns are editable — and the [Bind] guest list lets them in.
+        // The new columns are editable — and the [Bind] list lets them in.
         var editPage = await _client.GetAsync($"{Index}/Edit/1");
         Assert.True(editPage.IsSuccessStatusCode,
             "the Edit form isn't loading — checks 2 and 3 cover it; this one builds on them.");
@@ -441,7 +441,7 @@ public class CrudChecks : IClassFixture<RegistryApp>
                 "I corrected The Hodag's Latin name through your form, got the redirect, and my "
                 + $"correction never reached the database (it now holds: {latin ?? "null"}). The "
                 + "field is on the form — so the culprit is the [Bind] list on your Edit POST: "
-                + "it's a guest list, only the names on it are read out of the form, and "
+                + "only the names on it are read out of the form, and "
                 + "LatinName and ImageUrl aren't on yours yet. Worse than ignored: the unbound "
                 + "field arrives null and Update() writes the null. Add both names to the list.");
         }
