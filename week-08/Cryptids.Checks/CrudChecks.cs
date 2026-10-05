@@ -188,9 +188,10 @@ public class CrudChecks : IClassFixture<RegistryApp>
 
         Assert.True((int)response.StatusCode is 302 or 303,
             (int)response.StatusCode == 404
-                ? "posting the correction came back 404. The URL said record 3 but the posted form "
-                  + "didn't agree — that's the missing hidden Id again: without it the form posts "
-                  + "Id 0, and the action's  if (id != cryptid.Id) return NotFound();  fires."
+                ? "posting the correction came back 404. The URL said record 3 and the posted form "
+                  + "disagreed, so the action's  if (id != cryptid.Id) return NotFound();  fired. "
+                  + "Check the value of your hidden Id input — a missing one wouldn't do this (the "
+                  + "binder would read the id from the URL), but a wrong one will."
                 : $"posting a valid correction returned {(int)response.StatusCode} instead of a "
                   + "redirect. The POST half ends the same way Create always has:\n"
                   + "    return RedirectToAction(nameof(Index));");
@@ -198,10 +199,13 @@ public class CrudChecks : IClassFixture<RegistryApp>
         var after = DetailsIds(await Html(Index));
         Assert.True(after.Count == before.Count,
             $"the registry had {before.Count} records before the correction and {after.Count} "
-            + "after it. An edit is an UPDATE to the row that exists — if the count grew, the POST "
-            + "called Add and filed a duplicate instead of Update:\n"
+            + "after it. An edit is an UPDATE to the row that exists. Two things file a duplicate "
+            + "instead: the POST calling Add rather than Update:\n"
             + "    _context.Update(cryptid);\n"
-            + "    await _context.SaveChangesAsync();");
+            + "    await _context.SaveChangesAsync();\n"
+            + "or a missing hidden Id on a form whose action carries no id either — the POST then "
+            + "arrives with Id 0, and Update() treats an unset key as a new record:\n"
+            + "    <input type=\"hidden\" asp-for=\"Id\" />");
 
         var (scope, context) = _app.NewContext();
         using (scope)
