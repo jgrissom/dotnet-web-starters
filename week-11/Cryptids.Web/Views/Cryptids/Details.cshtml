@@ -1,0 +1,70 @@
+@model Cryptid
+@{
+    ViewData["Title"] = Model.Name;
+}
+
+<div class="row">
+    <div class="col-md-5">
+        <img src="@(Model.ImageUrl ?? "/img/cryptids/unillustrated.webp")" class="img-fluid rounded mb-3" alt="Field-guide plate: @Model.Name" />
+    </div>
+    <div class="col-md-7">
+        <h1>@Model.Name</h1>
+        @if (Model.LatinName != null)
+        {
+            <p class="fst-italic text-muted">@Model.LatinName</p>
+        }
+        <p class="lead">@Model.Region · first sighted @Model.FirstSighting</p>
+        <p>@Model.Sightings.Count report@(Model.Sightings.Count == 1 ? "" : "s") on file.</p>
+
+        @if (Model.IsDebunked)
+        {
+            <p><span class="badge bg-danger">💀 Debunked</span></p>
+        }
+        else
+        {
+            <p><span class="badge bg-success">👀 Unconfirmed</span></p>
+        }
+
+        <div class="mt-4">
+            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-secondary">✏️ Correct the record</a>
+            <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-outline-danger ms-2">🗑️ Close the file</a>
+        </div>
+
+        <p class="mt-4"><a href="/Cryptids">← Back to the registry</a></p>
+    </div>
+</div>
+
+<h2 class="h4 mt-5">The accounts</h2>
+
+@if (Model.Sightings.Count > 0)
+{
+    <div class="list-group mb-4">
+        @foreach (var sighting in Model.Sightings)
+        {
+            <div class="list-group-item">
+                <div class="d-flex justify-content-between">
+                    <strong>@sighting.Witness</strong>
+                    <span class="text-muted small">@sighting.SeenOn.ToString("MMMM d, yyyy")</span>
+                </div>
+                <div class="text-muted small mb-2">@sighting.Location</div>
+                <p class="mb-0">@sighting.Account</p>
+            </div>
+        }
+    </div>
+}
+else
+{
+    <p class="text-muted">Nothing on file. Nobody has reported this one yet.</p>
+}
+
+<p>
+    <a asp-controller="Sightings" asp-action="Create" asp-route-cryptidId="@Model.Id" class="btn btn-primary">
+        👁️ Report a sighting
+    </a>
+</p>
+
+@section Scripts {
+    <script>
+        console.log("Cryptid file loaded: @Model.Name");
+    </script>
+}
