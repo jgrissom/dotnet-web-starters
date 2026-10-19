@@ -59,11 +59,13 @@ public class IdentityChecks : IClassFixture<RegistryApp>
     }
 
     // Your user class: in the model, built on IdentityUser, and not
-    // IdentityUser itself.
+    // IdentityUser itself. (Identity's own class is built on IdentityUser<string>,
+    // so without the second test it would count as yours.)
     private static Type? UserType(DbContext context) =>
         context.Model.GetEntityTypes()
             .Select(e => e.ClrType)
-            .FirstOrDefault(t => BuiltOn(t, "IdentityUser"));
+            .FirstOrDefault(t => BuiltOn(t, "IdentityUser")
+                && !(t.Name == "IdentityUser" && t.Namespace == "Microsoft.AspNetCore.Identity"));
 
     private (IServiceScope scope, DbContext context) Db() => _app.NewContext();
 
