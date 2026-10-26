@@ -15,6 +15,8 @@ Everything else for the week — lecture notes, homework, slides — is in the s
 
 ## What's already done for you
 
-This is week 11's finished Registry, exactly as the lab left it: members can join, sign in and sign out, every member has a field name, and the archive's writes are behind a sign-in-only `[Authorize]` on `CryptidsController`. Reports stay public.
+This is week 11's finished Registry: members can join, sign in and sign out, every member has a field name, and the archive's writes are behind a sign-in-only `[Authorize]` on `CryptidsController`. Reports stay public.
+
+**One label changed:** the button that adds a creature is now **＋ Open a new file**, not *＋ File a report* — on `/Cryptids`, and on the form's title. From tonight a *report* means a sighting, which anyone can file; a *file* is the archive, which only a curator opens, corrects or closes.
 
 If your own week-11 lab never got to six checks, you are **not** behind — check 1 passes before you touch anything.

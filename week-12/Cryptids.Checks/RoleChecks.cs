@@ -215,7 +215,7 @@ public class RoleChecks : IClassFixture<RegistryApp>
         {
             var list = await Html(client, "/Cryptids");
             Assert.False(Links(list, "/Cryptids/Create"),
-                $"{who} sees the ＋ File a report button on /Cryptids. It leads to a page they can't "
+                $"{who} sees the ＋ Open a new file button on /Cryptids. It leads to a page they can't "
                 + "open. Task 5 wraps it in @if (User.IsInRole(\"Curator\")) { … }.");
 
             var details = await Html(client, "/Cryptids/Details/1");
@@ -231,7 +231,7 @@ public class RoleChecks : IClassFixture<RegistryApp>
         await using var curator = await Curator();
         Assert.True(curator.HoldsRole, "there's no curator to look with yet — check 4 comes first.");
         Assert.True(Links(await Html(curator.Client, "/Cryptids"), "/Cryptids/Create"),
-            "the curator can't see ＋ File a report on /Cryptids. The @if hides it from everyone else, "
+            "the curator can't see ＋ Open a new file on /Cryptids. The @if hides it from everyone else, "
             + "not from the curator — check the role name inside IsInRole is \"Curator\".");
         var mine = await Html(curator.Client, "/Cryptids/Details/1");
         Assert.True(Links(mine, "/Cryptids/Edit/1") && Links(mine, "/Cryptids/Delete/1"),
