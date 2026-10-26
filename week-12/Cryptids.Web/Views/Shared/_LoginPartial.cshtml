@@ -1,0 +1,29 @@
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<Member> UserManager
+
+<ul class="navbar-nav align-items-sm-center">
+@if (User.Identity?.IsAuthenticated == true)
+{
+    // The cookie says WHO is signed in. Anything else about them — the
+    // field name — is a column, so the partial looks the member up.
+    var member = await UserManager.GetUserAsync(User);
+    var name = string.IsNullOrEmpty(member?.FieldName) ? User.Identity.Name : member.FieldName;
+    <li class="nav-item">
+        <span class="navbar-text me-2">Signed in as @name</span>
+    </li>
+    <li class="nav-item">
+        <form asp-controller="Account" asp-action="Logout" method="post">
+            <button type="submit" class="btn btn-link nav-link">Sign out</button>
+        </form>
+    </li>
+}
+else
+{
+    <li class="nav-item">
+        <a class="nav-link" asp-controller="Account" asp-action="Register">Join</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" asp-controller="Account" asp-action="Login">Sign in</a>
+    </li>
+}
+</ul>
