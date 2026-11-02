@@ -1,4 +1,4 @@
-# Week 13 lab starter — The Registry gets polished
+# Week 15 lab starter — The Registry gets polished
 
 **Copy this folder out** to wherever you keep your projects, then work on the copy.
 Never work inside the clone: the next `git pull` will fight you.
@@ -7,11 +7,11 @@ Never work inside the clone: the next `git pull` will fight you.
 
 They live in the course repo, which you read in your browser — nothing to download:
 
-👉 **[Week 13 lab instructions](https://github.com/jgrissom/dotnet-web-dev/blob/main/week-13/lab/README.md)**
+👉 **[Week 15 lab instructions](https://github.com/jgrissom/dotnet-web-dev/blob/main/week-15/lab/README.md)**
 
 Everything else for the week — lecture notes, homework, slides — is in the same place:
 
-👉 **[Week 13 index](https://github.com/jgrissom/dotnet-web-dev/blob/main/week-13/README.md)**
+👉 **[Week 15 index](https://github.com/jgrissom/dotnet-web-dev/blob/main/week-15/README.md)**
 
 ## What's already done for you
 
