@@ -9,7 +9,7 @@
 //  happens after it runs. Nothing here talks to SQL Server, which is why
 //  `dotnet test` works on the bus with no wifi.
 //
-//  That also means 6/6 does not prove your connection string works —
+//  That also means 5/5 does not prove your connection string works —
 //  your browser proves that. Both matter.
 //
 //  New this week: two copies of your app can share one in-memory database.

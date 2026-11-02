@@ -7,10 +7,10 @@
 //  This week the Registry learns WHICH members may change it. Signing in is
 //  no longer enough: the archive's writes need the Curator role, a member who
 //  isn't a curator is told so on a page of the Registry's own, the curator
-//  comes from configuration, the buttons nobody else can use disappear — and
-//  the sign-in cookie turns out to carry the role. Same rules as weeks 7–11:
-//  everything runs against an in-memory database, so no wifi and no SQL
-//  Server, and 6/6 still doesn't prove your connection string works.
+//  comes from configuration, and the buttons nobody else can use disappear.
+//  Same rules as weeks 7–11: everything runs against an in-memory database,
+//  so no wifi and no SQL Server, and 5/5 still doesn't prove your connection
+//  string works.
 // ═══════════════════════════════════════════════════════════════════
 using System.Net;
 using System.Text.RegularExpressions;
@@ -236,34 +236,6 @@ public class RoleChecks : IClassFixture<RegistryApp>
         var mine = await Html(curator.Client, "/Cryptids/Details/1");
         Assert.True(Links(mine, "/Cryptids/Edit/1") && Links(mine, "/Cryptids/Delete/1"),
             "the curator can't see ✏️ Correct the record and 🗑️ Close the file on a creature's page.");
-    }
-
-    // ── 6 ─────────────────────────────────────────────────────────────────
-
-    [Fact]
-    public async Task Check6_TheCookieCarriesTheRole()
-    {
-        var stranger = _app.NewClient();
-        var away = await stranger.GetAsync("/Account/Claims");
-        Assert.True(away.StatusCode != HttpStatusCode.NotFound,
-            "GET /Account/Claims came back 404. Task 6 writes it: a Claims action on "
-            + "AccountController, and Views/Account/Claims.cshtml listing User.Claims.");
-        Assert.True(SentToSignIn(away),
-            $"a visitor who isn't signed in opened /Account/Claims and got {(int)away.StatusCode}. "
-            + "There's nobody to describe — put [Authorize] on the Claims action.");
-
-        await using var curator = await Curator();
-        Assert.True(curator.HoldsRole, "there's no curator to look with yet — check 4 comes first.");
-        var page = await curator.Client.GetAsync("/Account/Claims");
-        var html = await page.Content.ReadAsStringAsync();
-        Assert.True(page.StatusCode == HttpStatusCode.OK,
-            $"the curator opened /Account/Claims and got {(int)page.StatusCode}.");
-        Assert.True(html.Contains(curator.Email, StringComparison.OrdinalIgnoreCase),
-            "the curator's /Account/Claims doesn't show their email. Loop over every claim — "
-            + "@foreach (var claim in User.Claims) — and show each one's Type and Value.");
-        Assert.True(html.Contains("/claims/role", StringComparison.Ordinal) && html.Contains(Role, StringComparison.Ordinal),
-            "the curator's /Account/Claims doesn't show a role claim with Curator in it. Show both "
-            + "claim.Type and claim.Value — the role is one claim among the others.");
     }
 
     // ── a curator, the way the Registry gets one ──────────────────────────
