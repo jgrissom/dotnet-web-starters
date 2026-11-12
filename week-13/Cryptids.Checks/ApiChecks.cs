@@ -83,7 +83,7 @@ public class ApiChecks : IClassFixture<RegistryApp>
             + (list.StatusCode == HttpStatusCode.InternalServerError
                 ? ". A 500 with \"A possible object cycle was detected\" means the action is returning "
                   + "Cryptid objects with their Sightings loaded: each report points back at its creature. "
-                  + "Task 2 returns a CryptidDto, built by hand."
+                  + "Task 2 returns the creatures with no Include; task 3 brings the reports in through DTOs."
                 : ". Task 2 creates it: a CryptidsApiController with [ApiController] and "
                   + "[Route(\"api/cryptids\")] on the class, and an [HttpGet] action. Reading is public."));
         Assert.True(IsJson(list),
@@ -99,15 +99,6 @@ public class ApiChecks : IClassFixture<RegistryApp>
         Assert.True(hodag.TryGetProperty("name", out var name) && name.GetString() == "The Hodag",
             "creature 1 in /api/cryptids has no \"name\" of The Hodag. The JSON's names start with a "
             + "lowercase letter: that's the serializer's default, not something you type.");
-        Assert.False(hodag.TryGetProperty("sightings", out _),
-            "/api/cryptids still has a \"sightings\" property, which is what the Cryptid class looks "
-            + "like, not what the list should say. Task 2 returns a CryptidDto, with the number of "
-            + "reports instead of the reports.");
-        Assert.True(hodag.TryGetProperty("reportCount", out var count)
-                && count.ValueKind == JsonValueKind.Number && count.GetInt32() == 3,
-            "The Hodag has 3 reports on file, and its \"reportCount\" in /api/cryptids is "
-            + (hodag.TryGetProperty("reportCount", out var seen) ? seen.ToString() : "missing")
-            + ". A count of 0 means the query never loaded them: Include(c => c.Sightings).");
 
         var total = await stranger.GetAsync("/api/cryptids/count");
         Assert.True(total.StatusCode == HttpStatusCode.OK && IsJson(total),
@@ -161,6 +152,22 @@ public class ApiChecks : IClassFixture<RegistryApp>
         Assert.True(IsJson(missing),
             $"the 404 from /api/cryptids/999999 came back as {missing.Content.Headers.ContentType?.MediaType ?? "an empty body"}. "
             + "With [ApiController] on the class, NotFound() answers in JSON by itself.");
+
+        // The list says how many reports each creature has, not what they are.
+        var list = await Parse(await stranger.GetAsync("/api/cryptids"));
+        var first = list.ValueKind == JsonValueKind.Array
+            ? list.EnumerateArray().FirstOrDefault(c => c.TryGetProperty("id", out var i) && i.GetInt32() == 1)
+            : default;
+        Assert.False(first.ValueKind == JsonValueKind.Object && first.TryGetProperty("sightings", out _),
+            "/api/cryptids still has a \"sightings\" property, which is what the Cryptid class looks "
+            + "like, not what the list should say. Task 3 changes GetAll to return a CryptidDto, with "
+            + "the number of reports instead of the reports.");
+        Assert.True(first.ValueKind == JsonValueKind.Object && first.TryGetProperty("reportCount", out var count)
+                && count.ValueKind == JsonValueKind.Number && count.GetInt32() == 3,
+            "The Hodag has 3 reports on file, and its \"reportCount\" in /api/cryptids is "
+            + (first.ValueKind == JsonValueKind.Object && first.TryGetProperty("reportCount", out var listed) ? listed.ToString() : "missing")
+            + ". Task 3's CryptidDto carries it. A count of 0 means the query never loaded them: "
+            + "Include(c => c.Sightings).");
     }
 
     // ── 4 ─────────────────────────────────────────────────────────────────
