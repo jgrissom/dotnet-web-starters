@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>API tester</title>
+    <style>
+        body { font-family: system-ui, sans-serif; margin: 2rem auto; max-width: 46rem; padding: 0 1rem; line-height: 1.5; }
+        form { display: grid; grid-template-columns: 7rem 1fr; gap: .5rem; }
+        select, input, textarea, button, pre { font: inherit; padding: .4rem; box-sizing: border-box; }
+        textarea { grid-column: 1 / -1; font-family: ui-monospace, Menlo, Consolas, monospace; min-height: 8rem; }
+        button { grid-column: 1 / -1; cursor: pointer; }
+        #status { font-weight: bold; font-size: 1.2rem; min-height: 1.5em; margin-bottom: 0; }
+        #details { color: #666; margin-top: 0; min-height: 1.5em; }
+        pre { background: #f4f4f4; font-family: ui-monospace, Menlo, Consolas, monospace; overflow-x: auto; white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <h1>API tester</h1>
+    <p>Sends one request from this browser, so it carries your sign-in cookie if you are signed in on this site. Pick a method, type a path, and for POST or PUT put the JSON in the box.</p>
+
+    <form id="request">
+        <select id="method" aria-label="Method">
+            <option>GET</option>
+            <option>POST</option>
+            <option>PUT</option>
+            <option>DELETE</option>
+        </select>
+        <input id="path" aria-label="Path" value="/api/" required>
+        <textarea id="body" aria-label="JSON to send" placeholder="JSON to send with a POST or a PUT" spellcheck="false"></textarea>
+        <button>Send</button>
+    </form>
+
+    <p id="status"></p>
+    <p id="details"></p>
+    <pre id="reply"></pre>
+
+    <script>
+        const form = document.querySelector("#request");
+        const statusLine = document.querySelector("#status");
+        const details = document.querySelector("#details");
+        const reply = document.querySelector("#reply");
+
+        form.addEventListener("submit", async (event) => {
+            event.preventDefault();
+            statusLine.textContent = "Sending…";
+            details.textContent = "";
+            reply.textContent = "";
+
+            const method = document.querySelector("#method").value;
+            const path = document.querySelector("#path").value;
+
+            // redirect: "manual" so a redirect is shown, not quietly followed.
+            const options = { method, redirect: "manual" };
+            if (method === "POST" || method === "PUT") {
+                options.headers = { "Content-Type": "application/json" };
+                options.body = document.querySelector("#body").value;
+            }
+
+            try {
+                const response = await fetch(path, options);
+
+                if (response.type === "opaqueredirect") {
+                    statusLine.textContent = "A redirect";
+                    details.textContent = "The server sent this request to another address. That is a web page's answer, not an API's.";
+                    return;
+                }
+
+                statusLine.textContent = `${response.status} ${response.statusText}`;
+                details.textContent = [
+                    response.headers.get("Content-Type") || "no Content-Type: the body is empty",
+                    response.headers.get("Location") ? `Location: ${response.headers.get("Location")}` : "",
+                ].filter(Boolean).join(" · ");
+
+                const text = await response.text();
+                try {
+                    reply.textContent = JSON.stringify(JSON.parse(text), null, 2);
+                } catch {
+                    reply.textContent = text;
+                }
+            } catch (error) {
+                statusLine.textContent = "No answer";
+                details.textContent = error.message;
+            }
+        });
+    </script>
+</body>
+</html>

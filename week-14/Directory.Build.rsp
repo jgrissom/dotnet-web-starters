@@ -1,0 +1,4 @@
+# MSBuild reads this automatically. -tl:off turns off the terminal logger, which
+# otherwise prints every check failure a second time as "error TESTERROR" and
+# then reports "Build failed" for a build that succeeded and a test that didn't.
+-tl:off

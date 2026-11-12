@@ -1,0 +1,50 @@
+@model SightingFormViewModel
+@{
+    ViewData["Title"] = "Report a sighting";
+}
+
+<h1>Report a sighting 👁️</h1>
+<p class="text-muted">Anyone can file a report. What you saw is yours to tell.</p>
+
+<form asp-action="Create" method="post" class="col-md-8">
+    <div asp-validation-summary="All" class="text-danger"></div>
+
+    <div class="mb-3">
+        <label asp-for="Sighting.CryptidId" class="form-label"></label>
+        <select asp-for="Sighting.CryptidId" asp-items="Model.Cryptids" class="form-select">
+            <option value="">— pick a creature —</option>
+        </select>
+        <span asp-validation-for="Sighting.CryptidId" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Sighting.Witness" class="form-label"></label>
+        <input asp-for="Sighting.Witness" class="form-control" />
+        <span asp-validation-for="Sighting.Witness" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Sighting.Location" class="form-label"></label>
+        <input asp-for="Sighting.Location" class="form-control" />
+        <span asp-validation-for="Sighting.Location" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Sighting.SeenOn" class="form-label"></label>
+        <input asp-for="Sighting.SeenOn" class="form-control" />
+        <span asp-validation-for="Sighting.SeenOn" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Sighting.Account" class="form-label"></label>
+        <textarea asp-for="Sighting.Account" class="form-control" rows="5"></textarea>
+        <span asp-validation-for="Sighting.Account" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">File the report</button>
+    <a asp-controller="Cryptids" asp-action="Index" class="btn btn-link">Cancel</a>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
